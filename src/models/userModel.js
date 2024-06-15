@@ -57,6 +57,15 @@ var userModel = {
     const VALUES = [data.email, data.password];
 
     pool.query(SQLSTATMENT, VALUES, callback);
+    },
+
+    //check username and email exist
+    checkUsernameAndEmail: (data, callback) => {
+      const SQLSTATMENT = `SELECT username, email FROM user WHERE username = ? or email = ?`;
+
+      const VALUES = [data.username, data.email];
+
+      pool.query(SQLSTATMENT, VALUES, callback);
     }
   };
   

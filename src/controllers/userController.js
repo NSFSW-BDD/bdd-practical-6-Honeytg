@@ -45,7 +45,9 @@ const userController = {
         console.error("Error createNewUser:", error);
         res.status(500).json(error);
       } else {
-        res.status(201).json(results);
+        res.status(201).json({
+          message: `user ${data.username} created successfully`,
+        });
       }
     };
 
@@ -97,7 +99,6 @@ const userController = {
   },
 
   loginUser: (req, res, next) => {
-
     const data = {
       email: req.body.email,
       password: req.body.password
@@ -120,7 +121,30 @@ const userController = {
       }
     };
     userModel.loginUser(data, callback);
-  }
+  },
+
+  //middleware to check if email or username exist
+  checkUsernameOrEmailExist: (req, res, next) => {
+    const data = {
+      username: req.body.username,
+      email: req.body.email
+    };
+    const callback = (error, results, fields) => {
+      if (error){
+        console.error("Error checking username or email:", error);
+        res.status(500).json(error);
+      } else {
+      if (results.length > 0) {
+        res.status(400).json({
+          message: "username or email already exist",
+        });
+      } else {
+        next(); //Proceed to the next middleware or route handler
+      }
+    }
+  };
+   userModel.checkUsernameAndEmail(data, callback);
+  },
 };
 
 module.exports = userController;
